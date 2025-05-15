@@ -1,5 +1,5 @@
 const Course = require('../models/Course');
-const Lecture = require('../models/lecture');
+const Lecture = require('../models/Lecture');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const User = require('../models/User');

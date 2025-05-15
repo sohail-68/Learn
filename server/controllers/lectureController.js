@@ -1,6 +1,6 @@
-const Lecture = require('../models/lecture');
+const Lecture = require('../models/Lecture');
 const Course = require('../models/Course');
-const lecture = require('../models/lecture');
+// const lecture = require('../models/lecture');
 
 
 // Create a new lecture

@@ -1,4 +1,4 @@
-node_modules
-uplaods
+node_modules/
+uploads/
 .env
 server.zip
