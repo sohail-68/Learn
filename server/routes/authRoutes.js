@@ -1,7 +1,7 @@
 const express = require('express');
 const Auth = require('../middlewares/authMiddleware');
 const authorizeRole = require('../middlewares/roleMiddleware');
-const courseController = require('../controllers/courseController');
+const courseController = require('../controllers/coursec');
 const { registerUser, getWishlist,logoutUser,loginUser,searchCourses,Profile,changePassword} = require('../controllers/authController');
 const router = express.Router();
 

@@ -1,12 +1,10 @@
-const Course = require('../models/Course');
-const Lecture = require('../models/Lecture');
+const Lecture = require('../models/lecture');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
-const User = require('../models/User');
-const Payment = require('../models/Payment');
-const { log } = require('console');
+const User = require('../models/user');
+const Payment = require('../models/payment');
 // Controller for creating a course
-
+const Course=require("../models/coursec")
 const razorpayInstance = new Razorpay({
   key_id: 'rzp_test_pVQpC22qnKIhBQ', // Your Razorpay public key
   key_secret: 'X67fjCrIoXIPaHeIwWaIE5yi', // Your Razorpay secret key

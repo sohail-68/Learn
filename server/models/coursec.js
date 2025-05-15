@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const courseSchema = new mongoose.Schema({
+const CourseSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   category: { type: String },
@@ -65,7 +65,7 @@ const courseSchema = new mongoose.Schema({
     averageRating: { type: Number, min: 1, max: 5, default: 1 },  // Default value is 1, which satisfies min: 1
   },
 }, { timestamps: true });
-mongoose.set("strictPopulate",false)
+// mongoose.set("strictPopulate",false)
 
-module.exports = mongoose.model('Course', courseSchema);
+module.exports = mongoose.model('Course', CourseSchema);
 

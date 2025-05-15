@@ -1,5 +1,5 @@
-const Lecture = require('../models/Lecture');
-const Course = require('../models/Course');
+const Lecture = require('../models/lecture');
+const Course = require('../models/coursec');
 // const lecture = require('../models/lecture');
 
 

@@ -18,7 +18,7 @@ const {
   deleteAllPayments
   // getwish,
 
-} = require('../controllers/courseController');
+} = require('../controllers/coursec');
 const protect = require('../middlewares/authMiddleware');
 const authorizeRole = require('../middlewares/roleMiddleware');
 const router = express.Router();

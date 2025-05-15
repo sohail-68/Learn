@@ -1,5 +1,5 @@
 const Progress = require("../models/Progress");
-const Lecture = require("../models/Lecture");
+const Lecture = require("../models/lecture.js");
 
 exports.getCourseProgress = async (req, res) => {
   try {
