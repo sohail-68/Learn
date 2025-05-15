@@ -1,5 +1,4 @@
 const Quiz = require('../models/Quize');
-const User = require('../models/User');
 
 // ✅ Create a quiz
 exports.createQuiz = async (req, res) => {
