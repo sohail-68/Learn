@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const connectDB = require('./config/db');
 const cors = require('cors');
-const quizRoutes = require('./routes/quizRoutes.js');
 const authRoutes = require('./routes/authRoutes.js');
 const lecture = require('./routes/lecture.js');
 const courseRoutes = require('./routes/courseRoutes');
@@ -18,7 +17,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/lecture', lecture);
-app.use('/api/quizzes', quizRoutes);
 app.use('/progress', progrroutes);
 app.use('/api/courses', courseRoutes);
 
