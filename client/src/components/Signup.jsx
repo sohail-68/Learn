@@ -7,21 +7,27 @@ import {
   Typography,
   TextField,
   Button,
-  Card,
-  CardContent,
   CircularProgress,
   Alert,
+  InputAdornment,
+  IconButton,
+  Divider,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,6 +45,7 @@ const Signup = () => {
       const { data } = await axios.post('https://learn-rd8o.onrender.com/api/auth/register', formData);
       localStorage.setItem('userid', data.user._id);
       dispatch(registerUserSuccess(data.user));
+      navigate('/'); // Redirect after success
     } catch (error) {
       dispatch(registerUserFailure(error.response?.data?.message || error.message));
     }
@@ -47,151 +54,118 @@ const Signup = () => {
   return (
     <Box
       display="flex"
-      flexDirection="column"
-      alignItems="center"
       justifyContent="center"
+      alignItems="center"
       minHeight="100vh"
-      bgcolor="linear-gradient(135deg, rgba(19, 82, 131, 0.8), rgba(6, 26, 44, 0.8))"
-      px={3}
+      sx={{
+        background: 'radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%)',
+        px: 3,
+      }}
     >
-      <Card
+      <Box
         sx={{
-          maxWidth: 450,
           width: '100%',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
-          borderRadius: 6,
-          transform: 'scale(1)',
-          transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-          '&:hover': {
-            transform: 'scale(1.03)',
-            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.2)',
-          },
+          maxWidth: 450,
+          bgcolor: '#fff',
+          borderRadius: 3,
+          p: 5,
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+          textAlign: 'center',
         }}
+        component="form"
+        onSubmit={handleSubmit}
       >
-        <CardContent>
-          <Typography
-            variant="h4"
-            gutterBottom
-            align="center"
-            sx={{
-              fontWeight: 700,
-              color: 'ButtonShadow',
-              mb: 4,
-              textTransform: 'uppercase',
-            }}
+        <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 700, color: '#333', mb: 2 }}>
+          Create Account
+        </Typography>
+        <Typography variant="body2" color="textSecondary" mb={3}>
+          Sign up to get started
+        </Typography>
+
+        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+
+        <TextField
+          fullWidth
+          label="Full Name"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          variant="outlined"
+          margin="normal"
+          required
+          InputProps={{ style: { backgroundColor: '#f9f9f9' } }}
+        />
+
+        <TextField
+          fullWidth
+          label="Email Address"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          variant="outlined"
+          margin="normal"
+          required
+          InputProps={{ style: { backgroundColor: '#f9f9f9' } }}
+        />
+
+        <TextField
+          fullWidth
+          label="Password"
+          name="password"
+          type={showPassword ? 'text' : 'password'}
+          value={formData.password}
+          onChange={handleInputChange}
+          variant="outlined"
+          margin="normal"
+          required
+          InputProps={{
+            style: { backgroundColor: '#f9f9f9' },
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={() => setShowPassword((prev) => !prev)} edge="end">
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <Button
+          fullWidth
+          type="submit"
+          variant="contained"
+          sx={{
+            mt: 3,
+            py: 1.5,
+            fontWeight: 'bold',
+            fontSize: '1rem',
+            textTransform: 'none',
+            background: 'linear-gradient(45deg, #6a11cb, #2575fc)',
+            '&:hover': {
+              background: 'linear-gradient(45deg, #6a11cb, #5B86E5)',
+            },
+          }}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
+        </Button>
+
+
+       
+
+        <Typography variant="body2" mt={3} color="textSecondary">
+          Already have an account?{' '}
+          <Button
+            variant="text"
+            size="small"
+            sx={{ color: '#6a11cb', fontWeight: 'bold', textTransform: 'none' }}
+            onClick={() => navigate('/login')}
           >
-            Create Account
-          </Typography>
-
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-
-          <Box component="form" onSubmit={handleSubmit} noValidate>
-            <TextField
-              label="Full Name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  backgroundColor: '#fff',
-                  borderRadius: '10px',
-                },
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                },
-              }}
-            />
-            <TextField
-              label="Email Address"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  backgroundColor: '#fff',
-                  borderRadius: '10px',
-                },
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                },
-              }}
-            />
-            <TextField
-              label="Password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              InputProps={{
-                style: {
-                  backgroundColor: '#fff',
-                  borderRadius: '10px',
-                },
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                },
-              }}
-            />
-
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={loading}
-              sx={{
-                mt: 3,
-                py: 1.5,
-                fontWeight: 600,
-                backgroundColor: '#2C4D85',
-                '&:hover': {
-                  backgroundColor: '#224B7B',
-                },
-              }}
-            >
-              {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'}
-            </Button>
-          </Box>
-
-          <Typography
-            variant="body2"
-            mt={3}
-            align="center"
-            color="textSecondary"
-          >
-            Already have an account?{' '}
-            <Button
-              variant="text"
-              size="small"
-              sx={{
-                color: '#2C4D85',
-                fontWeight: 'bold',
-                textTransform: 'none',
-              }}
-            >
-              <Link to="/login" style={{ textDecoration: 'none', color: '#2C4D85' }}>
-                Log In
-              </Link>
-            </Button>
-          </Typography>
-        </CardContent>
-      </Card>
+            Log In
+          </Button>
+        </Typography>
+      </Box>
     </Box>
   );
 };
