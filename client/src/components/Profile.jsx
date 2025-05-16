@@ -117,7 +117,7 @@ const Profile = () => {
         alignItems: 'center',
         minHeight: '100vh',
         backgroundColor: '#eaeaea',
-        padding: 2,
+        padding: 1,
         perspective: '1000px',
       }}
     >
