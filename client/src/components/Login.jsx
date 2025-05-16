@@ -152,33 +152,11 @@ function Login() {
           {loading ? <CircularProgress size={24} color="inherit" /> : 'Log In'}
         </Button>
 
-        <Box mt={3} textAlign="center">
-          <Button
-            variant="text"
-            size="small"
-            sx={{ color: '#6a11cb', textTransform: 'none', fontWeight: 'bold' }}
-          >
-            Forgot Password?
-          </Button>
-        </Box>
+       
 
         <Divider sx={{ my: 3 }}>or</Divider>
 
-        <Button
-          fullWidth
-          variant="outlined"
-          sx={{
-            py: 1.5,
-            textTransform: 'none',
-            color: '#333',
-            borderColor: '#ddd',
-            '&:hover': {
-              backgroundColor: '#f9f9f9',
-            },
-          }}
-        >
-          Continue with Google
-        </Button>
+       
 
         <Typography
           variant="body2"
