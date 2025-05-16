@@ -162,7 +162,7 @@ const SearchResultsPage = () => {
                     }}
                   >
                     <img
-                      src={`http://localhost:5000/${course.courseThumbnail}`}
+                      src={`https://learn-rd8o.onrender.com/${course.courseThumbnail}`}
                       alt={course.title}
                       style={{
                         width: '100%',

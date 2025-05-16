@@ -36,7 +36,7 @@ const Signup = () => {
     dispatch(registerUserStart());
 
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/register', formData);
+      const { data } = await axios.post('https://learn-rd8o.onrender.com/api/auth/register', formData);
       localStorage.setItem('userid', data.user._id);
       dispatch(registerUserSuccess(data.user));
     } catch (error) {

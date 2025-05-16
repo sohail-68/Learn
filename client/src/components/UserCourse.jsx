@@ -21,7 +21,7 @@ const UserCourse = () => {
   // Fetch user profile
   async function fetchProfile() {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/profile', {
+      const response = await fetch('https://learn-rd8o.onrender.com/api/auth/profile', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`, // Replace with actual token
@@ -126,7 +126,7 @@ console.log(profile);
                       component="img"
                       alt={course.title}
                       height="200"
-                      image={`http://localhost:5000/${course.courseThumbnail}`}
+                      image={`https://learn-rd8o.onrender.com/${course.courseThumbnail}`}
                       sx={{
                         objectFit: "cover",
                         filter: "brightness(0.95)",

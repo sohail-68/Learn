@@ -117,7 +117,7 @@ const CoursePage = () => {
           component="img"
           alt={course.title}
           height="350"
-          image={`http://localhost:5000/${course.courseThumbnail}`}
+          image={`https://learn-rd8o.onrender.com/${course.courseThumbnail}`}
           sx={{
             objectFit: "cover",
           }}
