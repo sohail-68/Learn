@@ -171,7 +171,7 @@ console.log(courses);
               >
                 <CardMedia
                   component="img"
-                  height="140"
+                  height="240"
                   image={`https://learn-rd8o.onrender.com/${course.courseThumbnail.replace(/\\/g, '/')}`}
                   alt={`${course.title} Thumbnail`}
                 />
@@ -199,29 +199,29 @@ console.log(courses);
                     <Typography variant="caption">Students Enrolled</Typography>
                   </Badge>
                 </CardContent>
-                <Box sx={{ p: 2, textAlign: 'center', mt: 'auto' }}>
-                  <Button
-                    variant="contained"
-                    color="info"
-                    onClick={() => handleViewLectures(course._id)}
-                    sx={{ mr: 1 }}
-                  >
-                    View Lectures
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleAddLecture(course._id)}
-                  >
-                    Add Lecture
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handelQuize(course._id)}
-                  >
-                  quize
-                  </Button>
+                <Box sx={{ p: 2 }}>
+               <Grid container spacing={1}>
+    <Grid item xs={6}>
+      <Button fullWidth variant="contained" color="info" onClick={() => handleViewLectures(course._id)}>
+        View Lectures
+      </Button>
+    </Grid>
+    <Grid item xs={6}>
+      <Button fullWidth variant="contained" color="success" onClick={() => handleAddLecture(course._id)}>
+        Add Lecture
+      </Button>
+    </Grid>
+    <Grid item xs={6}>
+      <Button fullWidth variant="contained" color="success" onClick={() => handelQuize(course._id)}>
+        Quiz
+      </Button>
+    </Grid>
+    <Grid item xs={6}>
+      <Button fullWidth variant="outlined" color="primary" onClick={() => navigate(`/admin/cdetail/${course._id}`)}>
+        View Details
+      </Button>
+    </Grid>
+  </Grid>
                 </Box>
               </Card>
             </Grid>
