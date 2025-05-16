@@ -276,23 +276,7 @@ console.log(location);
         </Typography>
       </Box>
       
-      <Box display="flex" justifyContent="center" alignItems="center" mb={4} gap={2} sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
-        <TextField
-          placeholder="Search courses by title or description"
-          variant="outlined"
-          value={searchTerm}
-          onChange={handleSearchInputChange}
-          sx={{ width: { xs: '100%', sm: '50%' } }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSearch}
-          startIcon={<SearchIcon />}
-        >
-          Search
-        </Button>
-      </Box>
+     
       
       {loading && <Box display="flex" justifyContent="center" alignItems="center" height="50vh"><CircularProgress size={80} thickness={4.5} sx={{ color: "#1e3a8a" }} /></Box>}
       {error && <Alert severity="error">{error}</Alert>}
