@@ -1,389 +1,296 @@
-
-import { AppBar, Toolbar, Typography, Menu, MenuItem, Box, Button, IconButton, Drawer, TextField } from '@mui/material';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
-import HomeIcon from '@mui/icons-material/Home';
-import SchoolIcon from '@mui/icons-material/School';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import LogoutIcon from '@mui/icons-material/Logout';
-import SearchIcon from '@mui/icons-material/Search';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Menu,
+  MenuItem,
+  Box,
+  Button,
+  IconButton,
+  Drawer,
+  TextField,
+  Stack,
+} from '@mui/material';
+import {
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  Home as HomeIcon,
+  School as SchoolIcon,
+  AccountCircle as AccountCircleIcon,
+  Logout as LogoutIcon,
+  Search as SearchIcon,
+  Favorite as FavoriteIcon,
+  Login as LoginIcon,
+} from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import Path from "../images/Path.png"
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setSearchTerm, fetchCourses } from '../store/features/searchSlice';
 import { toast } from 'react-toastify';
+import Path from '../images/Path.png';
+
 const Navbar = () => {
   const dispatch = useDispatch();
-  const { searchTerm, loading,courses } = useSelector((state) => state.search);
-console.log(courses);
-const navigate=useNavigate();
+  const navigate = useNavigate();
+  const { searchTerm, loading, courses } = useSelector((state) => state.search);
 
-  const handleSearch = () => {
-    if (!searchTerm.trim()) {
-      alert('Please enter a valid search term.');
-      return;
-    }
-    navigate(`/user/search?term=${encodeURIComponent(searchTerm)}`);
-    dispatch(setSearchTerm(''));
-    dispatch(fetchCourses(searchTerm));
-  };
   const [anchorEl, setAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Dropdown menu handlers
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleSearch = () => {
+    if (!searchTerm.trim()) {
+      toast.warn('Please enter a valid search term.');
+      return;
+    }
+    navigate(`/user/search?term=${encodeURIComponent(searchTerm)}`);
+    dispatch(fetchCourses(searchTerm));
+    dispatch(setSearchTerm(''));
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const toggleDrawer = (open) => () => {
-    setDrawerOpen(open);
-  };
   const logoutUser = async () => {
     try {
-      // Inform the server (optional, but useful for logging purposes)
       const response = await fetch('https://learn-rd8o.onrender.com/api/auth/logout', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem("token")}`, // Pass the token in the Authorization header
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
-  
       if (response.ok) {
-        // Clear the token from localStorage
-        localStorage.removeItem('token');  // Or any other key you're using for the token
-  toast.success("logout")
-
-        // window.location.href = '/login';  // Or wherever you want to redirect
-        setTimeout(() => {
-          
-          navigate("/login")
-        }, 2000);
+        localStorage.removeItem('token');
+        toast.success('Logout successful');
+        setTimeout(() => navigate('/login'), 1500);
       } else {
-        console.error('Failed to log out');
+        toast.error('Logout failed');
       }
-    } catch (error) {
-      console.error('Error logging out:', error);
+    } catch (err) {
+      toast.error('Error logging out');
     }
   };
-  
+
   return (
-<AppBar
-  position="sticky"
+    <AppBar
+      position="sticky"
+      elevation={3}
+      sx={{
+        backgroundColor: '#f5f7fa',
+        borderBottom: '1px solid #e0e0e0',
+      }}
+    >
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        {/* Brand Logo */}
+        <Link to="/user">
+          <img
+            src={Path}
+            alt="Logo"
+            style={{
+              width: '2rem',
+              objectFit: 'cover',
+              borderRadius: '50%',
+              cursor: 'pointer',
+            }}
+          />
+        </Link>
+
+        {/* Search & Nav Links (Large Screens) */}
+     <Box
   sx={{
-    backgroundColor: '#FFFFFF', // Solid blue background
-    padding: '1rem 1rem',
-    boxShadow: '10 4px 10px rgba(0, 0, 0, 0.3)',
+    display: { xs: 'none', lg: 'flex' },
+    alignItems: 'center',
+    gap: 2,
+    flexBasis: '1',
+    // flexWrap: 'wrap',
   }}
 >
+  {/* Search Field */}
+  <TextField
+    size="small"
+    placeholder="Search courses..."
+    variant="outlined"
+    value={searchTerm}
+    onChange={(e) => dispatch(setSearchTerm(e.target.value))}
+    sx={{ minWidth: 500 }}
+  />
 
-  <Toolbar>
-    {/* Logo/Brand */}
-    <Typography
-      variant="h6"
-      component={Link}
-      to="/user"
-      sx={{
-        flexGrow: 1,
-        fontWeight: 'bold',
-        textDecoration: 'none',
-        color: '#1e3a8a', // White text
-        fontFamily: 'Roboto, sans-serif',
-      }}
-    >
-      <img src={Path} alt="" loading="lazy"   style={{width:"6rem", background:"none", objectFit:"cover", borderRadius:"3rem"}}/>
-    </Typography>
+  {/* Search Button */}
+<Button
+  variant="contained"
+  onClick={handleSearch}
+  startIcon={<SearchIcon />}
+  disabled={loading}
+  sx={{
+    backgroundColor: '#1e3a8a',
+    textTransform: 'none',
+    whiteSpace: 'nowrap',
+    width: '14rem', // Increased width
+    fontSize: '1rem',
+    paddingX: 6,
+    '&:hover': {
+      backgroundColor: '#162e6a',
+    },
+  }}
+>
+  {loading ? 'Searching...' : 'Search'}
+</Button>
 
-    {/* Hamburger Menu for Mobile */}
-    <IconButton
-      edge="end"
-      color="1e3a8a"
-      aria-label="menu"
-      onClick={toggleDrawer(true)}
-      sx={{ display: { xs: 'block', lg: 'none' } }}
-    >
-      <MenuIcon sx={{ color: '#1e3a8a' }} /> {/* White icon */}
+
+  {/* Nav Links */}
+  <NavLink icon={<SchoolIcon />} label="Courses" to="/user/course" />
+  <NavLink icon={<FavoriteIcon />} label="Wishlist" to="/user/wish" />
+  <NavLink icon={<AccountCircleIcon />} label="Profile" to="/user/profile" />
+
+  {/* Logout */}
+  <Button
+    onClick={logoutUser}
+    startIcon={<LogoutIcon />}
+    sx={{
+      textTransform: 'none',
+      color: '#1e3a8a',
+      fontWeight: 600,
+      whiteSpace: 'nowrap',
+    }}
+  >
+    Logout
+  </Button>
+</Box>
+<Box sx={{
+  display:{md:'none',xs:"flex"},
+  gap:"0.3rem"
+
+}}>
+    <TextField
+    size="small"
+    placeholder="Search courses..."
+    variant="outlined"
+    value={searchTerm}
+    onChange={(e) => dispatch(setSearchTerm(e.target.value))}
+    sx={{ width: "10rem" }}
+  />
+  <Button
+  variant="contained"
+  onClick={handleSearch}
+  // startIcon={<SearchIcon />}
+  disabled={loading}
+  sx={{
+    backgroundColor: '#1e3a8a',
+    textTransform: 'none',
+    whiteSpace: 'nowrap',
+    width: '2rem', // Increased width
+    fontSize: '1rem',
+    paddingX: 3,
+    '&:hover': {
+      backgroundColor: '#162e6a',
+    },
+  }}
+>
+  {loading ? 'Searching...' : 'Search'}
+</Button>
+</Box>
+
+
+        {/* Hamburger Icon (Mobile) */}
+        <IconButton
+          sx={{ display: { xs: 'block', lg: 'none' } }}
+          onClick={() => setDrawerOpen(true)}
+        >
+          <MenuIcon sx={{ color: '#1e3a8a' }} />
+        </IconButton>
+      </Toolbar>
+
+      {/* Drawer Menu (Mobile View) */}
+      <Drawer
+  anchor="right"
+  open={drawerOpen}
+  onClose={() => setDrawerOpen(false)}
+  PaperProps={{
+    sx: {
+      width: 280,
+      padding: 3,
+      backgroundColor: '#f9fafb',
+      boxShadow: 4,
+    },
+  }}
+>
+  {/* Close Button */}
+  <Box display="flex" justifyContent="flex-end">
+    <IconButton onClick={() => setDrawerOpen(false)} sx={{ color: '#1e3a8a' }}>
+      <CloseIcon />
     </IconButton>
+  </Box>
 
-    <Box
+  {/* Navigation Links */}
+  <Stack spacing={2} mt={3}>
+    <NavLink
+      icon={<SchoolIcon sx={{ color: '#1e3a8a' }} />}
+      label="Courses"
+      to="/user/course"
+      onClick={() => setDrawerOpen(false)}
+    />
+    <NavLink
+      icon={<FavoriteIcon sx={{ color: '#1e3a8a' }} />}
+      label="Wishlist"
+      to="/user/wish"
+      onClick={() => setDrawerOpen(false)}
+    />
+    <NavLink
+      icon={<AccountCircleIcon sx={{ color: '#1e3a8a' }} />}
+      label="Profile"
+      to="/user/profile"
+      onClick={() => setDrawerOpen(false)}
+    />
+    <NavLink
+      icon={<LoginIcon sx={{ color: '#1e3a8a' }} />}
+      label="Login"
+      to="/login"
+      onClick={() => setDrawerOpen(false)}
+    />
+
+    {/* Logout Button */}
+    <Button
+      startIcon={<LogoutIcon />}
       sx={{
-        display: { xs: 'none', xl: 'flex' },
-        gap: 3,
-        alignItems: 'center',
-      }}
-    >
-      <TextField
-        variant="outlined"
-        placeholder="Search courses"
-        value={searchTerm}
-        onChange={(e) => dispatch(setSearchTerm(e.target.value))}
-      />
-      <Button
-        variant="contained"
-        startIcon={<SearchIcon />}
-        onClick={handleSearch}
-        sx={{
-          backgroundColor: '#1e3a8a',
-        }}
-        disabled={loading}
-      >
-        {loading ? 'Searching...' : 'Search'}
-      </Button>
-      <Button
-        component={Link}
-        to="/user/course"
-        sx={{
-          textTransform: 'none',
-          fontSize:'1rem',
-          color: '#1e3a8a',
-          
-          
-           // White text
-          fontWeight: 'bold',
-          '&:hover': { color: '#1e3a8a' }, // Light blue on hover
-        }}
-        startIcon={<SchoolIcon sx={{ color: '#ffffff' }} />}
-      >
-        Courses
-      </Button>
-      <Button
-        component={Link}
-        to="/login"
-        sx={{
-          textTransform: 'none',
-          fontSize:'1rem',
-          color: '#1e3a8a',
-          
-          
-           // White text
-          fontWeight: 'bold',
-          '&:hover': { color: '#1e3a8a' }, // Light blue on hover
-        }}
-        startIcon={<SchoolIcon sx={{ color: '#ffffff' }} />}
-      >
-        Login
-      </Button>
-      <Button
-        component={Link}
-        to="/user/wish"
-        sx={{
-          textTransform: 'none',
-          fontSize:'1rem',
-          color: '#1e3a8a',
-          
-          
-           // White text
-          fontWeight: 'bold',
-          '&:hover': { color: '#1e3a8a' }, // Light blue on hover
-        }}
-        startIcon={<SchoolIcon sx={{ color: '#ffffff' }} />}
-      >
-        Wishlist
-      </Button> 
-      {/* <Button
-        onClick={handleMenuOpen}
-        sx={{
-          textTransform: 'none',
-          fontSize:'1rem',
-
-          color: '#1e3a8a',
-          fontWeight: 'bold',
-          '&:hover': { color: '#1e3a8a' },
-        }}
-        startIcon={<HomeIcon sx={{ color: '#ffffff' }} />}
-      >
-        Lectures
-      </Button> */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        sx={{ mt: 2 }}
-      >
-        <MenuItem
-          component={Link}
-          to="/lectures/1"
-          onClick={handleMenuClose}
-          sx={{ fontWeight: 'bold' }}
-        >
-          Lecture 1
-        </MenuItem>
-        <MenuItem
-          component={Link}
-          to="/lectures/2"
-          onClick={handleMenuClose}
-          sx={{ fontWeight: 'bold' }}
-        >
-          Lecture 2
-        </MenuItem>
-        <MenuItem
-          component={Link}
-          to="/lectures/3"
-          onClick={handleMenuClose}
-          sx={{ fontWeight: 'bold' }}
-        >
-          Lecture 3
-        </MenuItem>
-      </Menu>
-      <Button
-        component={Link}
-        to="/user/profile"
-        sx={{
-          textTransform: 'none',
-          color: '#1e3a8a',
-          fontSize:'1rem',
-
-          fontWeight: 'bold',
-          '&:hover': { color: '#add8e6' },
-        }}
-        startIcon={<AccountCircleIcon sx={{ color: '#ffffff' }} />}
-      >
-        Profile
-      </Button>
-      <Button
-        component={Link}
-        // to="/logout"
-        sx={{
-          fontSize:'1rem',
-
-          textTransform: 'none',
-          color: '#1e3a8a',
-          fontWeight: 'bold',
-          '&:hover': { color: '#add8e6' },
-        }}
-        startIcon={<LogoutIcon sx={{ color: '#ffffff' }} />}
-        onClick={logoutUser}
-      >
-        Logout
-      </Button>
-    </Box>
-
-    {/* Drawer for Mobile */}
-    <Drawer
-      anchor="right"
-      open={drawerOpen}
-      onClose={toggleDrawer(false)}
-      sx={{
-        '& .MuiDrawer-paper': {
-          width: 250,
-          backgroundColor: '#007bff', // Match the header color
-          color: '#ffffff',
-          padding: 2,
+        textTransform: 'none',
+        color: '#ffffff',
+        backgroundColor: '#1e3a8a',
+        fontWeight: 600,
+        borderRadius: 2,
+        paddingY: 1,
+        '&:hover': {
+          backgroundColor: '#162e6a',
         },
       }}
+      onClick={() => {
+        logoutUser();
+        setDrawerOpen(false);
+      }}
     >
-      <Box sx={{ textAlign: 'center' }}>
-        <IconButton
-          onClick={toggleDrawer(false)}
-          sx={{ color: '#ffffff', alignSelf: 'flex-end' }}
-        >
-          <CloseIcon />
-        </IconButton>
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          textAlign: 'center',
-        }}
-      >
-        <Button
-          component={Link}
-          to="/courses"
-          sx={{
-            textTransform: 'none',
-            color: '#ffffff',
-            fontWeight: 'bold',
-            '&:hover': { color: '#add8e6' },
-          }}
-          startIcon={<SchoolIcon sx={{ color: '#ffffff' }} />}
-          onClick={toggleDrawer(false)}
-        >
-          Courses
-        </Button>
-        <Button
-          component="div"
-          onClick={handleMenuOpen}
-          sx={{
-            textTransform: 'none',
-            color: '#ffffff',
-            fontWeight: 'bold',
-            '&:hover': { color: '#add8e6' },
-          }}
-          startIcon={<HomeIcon sx={{ color: '#ffffff' }} />}
-        >
-          Lectures
-        </Button>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          sx={{ mt: 2 }}
-        >
-          <MenuItem
-            component={Link}
-            to="/lectures/1"
-            onClick={handleMenuClose}
-            sx={{ fontWeight: 'bold' }}
-          >
-            Lecture 1
-          </MenuItem>
-          <MenuItem
-            component={Link}
-            to="/lectures/2"
-            onClick={handleMenuClose}
-            sx={{ fontWeight: 'bold' }}
-          >
-            Lecture 2
-          </MenuItem>
-          <MenuItem
-            component={Link}
-            to="/lectures/3"
-            onClick={handleMenuClose}
-            sx={{ fontWeight: 'bold' }}
-          >
-            Lecture 3
-          </MenuItem>
-        </Menu>
-        <Button
-          component={Link}
-          to="/profile"
-          sx={{
-            textTransform: 'none',
-            color: '#ffffff',
-            fontWeight: 'bold',
-            '&:hover': { color: '#add8e6' },
-          }}
-          startIcon={<AccountCircleIcon sx={{ color: '#ffffff' }} />}
-          onClick={toggleDrawer(false)}
-        >
-          Profile
-        </Button>
-        <Button
-          component={Link}
-          to="/logout"
-          sx={{
-            textTransform: 'none',
-            color: '#ffffff',
-            fontWeight: 'bold',
-            '&:hover': { color: '#add8e6' },
-          }}
-          startIcon={<LogoutIcon sx={{ color: '#ffffff' }} />}
-          onClick={toggleDrawer(false)}
-        >
-          Logout
-        </Button>
-      </Box>
-    </Drawer>
-  </Toolbar>
-</AppBar>
+      Logout
+    </Button>
+  </Stack>
+</Drawer>
 
+    </AppBar>
   );
 };
 
-export default Navbar
+const NavLink = ({ icon, label, to, onClick }) => (
+  <Button
+    component={Link}
+    to={to}
+    onClick={onClick}
+    startIcon={icon}
+    sx={{
+      textTransform: 'none',
+      color: '#1e3a8a',
+      fontWeight: 600,
+      justifyContent: 'flex-start',
+      width: '100%',
+      '&:hover': {
+        backgroundColor: '#e3eaf2',
+      },
+    }}
+  >
+    {label}
+  </Button>
+);
+
+export default Navbar;
