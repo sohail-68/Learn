@@ -28,32 +28,96 @@ exports.getQuizzesByCourse = async (req, res) => {
   }
 };
 
-// ✅ Submit quiz and calculate score
 exports.submitQuiz = async (req, res) => {
   try {
-    const { answers } = req.body; // Answers submitted by user
-    const quiz = await Quiz.findById(req.params.quizId);
+    const { answers } = req.body;
+    const quizId = req.params.quizId;
+    const userId = req.user._id; // from protect middleware
+console.log("att");
 
-    if (!quiz) {
-      return res.status(404).json({ success: false, message: 'Quiz not found' });
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not authenticated" });
     }
 
+    const quiz = await Quiz.findById(quizId);
+
+    if (!quiz) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Quiz not found" });
+    }
+
+    // ─────────────────────────────────────────────
+    // ✅ CHECK 1: Has user already attempted?
+    // ─────────────────────────────────────────────
+    const existingAttempt = quiz.attempts?.find(
+      (a) => a.user.toString() === userId.toString()
+    );
+
+    if (existingAttempt) {
+      return res.status(400).json({
+        success: false,
+        alreadyAttempted: true,
+        message: "You have already attempted this quiz.",
+        attempt: {
+          score: existingAttempt.score,
+          total: existingAttempt.total,
+          submittedAt: existingAttempt.submittedAt,
+        },
+      });
+    }
+
+    // ─────────────────────────────────────────────
+    // ✅ CHECK 2: Validate answers array
+    // ─────────────────────────────────────────────
+    if (!Array.isArray(answers)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid answers format" });
+    }
+
+    // ─────────────────────────────────────────────
+    // ✅ CALCULATE SCORE (no negative scoring)
+    // ─────────────────────────────────────────────
     let score = 0;
     quiz.questions.forEach((question, index) => {
-      console.log("qution",question);
-      console.log("answers",answers);
-      
       if (answers[index] === question.correctAnswer) {
         score++;
-      } 
-      else{
-        score--
       }
+      // ❌ NO score-- — wrong answer = 0 points
     });
-;
 
-    res.status(200).json({ success: true, score, total: quiz.questions.length });
+    const total = quiz.questions.length;
+
+    // ─────────────────────────────────────────────
+    // ✅ SAVE THE ATTEMPT — this is the KEY FIX
+    // ─────────────────────────────────────────────
+    if (!quiz.attempts) {
+      quiz.attempts = [];
+    }
+
+    quiz.attempts.push({
+      user: userId,
+      score: score,
+      total: total,
+      submittedAt: new Date(),
+    });
+
+    await quiz.save(); // ✅ PERSIST to database
+
+    // ─────────────────────────────────────────────
+    // ✅ RETURN SUCCESS
+    // ─────────────────────────────────────────────
+    res.status(200).json({
+      success: true,
+      score,
+      total,
+      message: "Quiz submitted successfully!",
+    });
   } catch (error) {
+    console.error("submitQuiz error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
