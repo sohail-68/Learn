@@ -6,6 +6,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import theme from "./theme";
+import HomePage from "./pages/HomePage.jsx";
 
 // Lazy-loaded components
 const Signup = lazy(() => import("./components/Signup"));
@@ -106,9 +107,17 @@ function App() {
               element={<ProtectedRoute element={<LectureAll />} allowedRoles={["admin"]} />}
             />
           </Route>
-
           {/* User Routes */}
-          <Route path="/user" element={<UserLayout />}>
+         <Route path="/user" element={<UserLayout />}>
+  <Route
+    index
+    element={
+      <ProtectedRoute
+        element={<HomePage />}
+        allowedRoles={["student", "admin"]}
+      />
+    }
+  />
             <Route
               path="profile"
               element={<ProtectedRoute element={<Profile />} allowedRoles={["student", "admin"]} />}
